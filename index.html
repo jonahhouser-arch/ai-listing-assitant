@@ -1,1 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Agent Web Flow AI turns quick real estate client notes into polished follow-up emails." />
+  <title>Agent Web Flow AI</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #dfe5ee;
+      --primary: #2457d6;
+      --primary-dark: #1743ad;
+      --success: #157347;
+      --shadow: 0 18px 50px rgba(23, 32, 51, 0.08);
+    }
 
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(36, 87, 214, 0.08), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 1.05rem;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 24px rgba(36, 87, 214, 0.25);
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      max-width: 780px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 700px;
+    }
+
+    .app-card {
+      background: var(--card);
+      border: 1px solid rgba(223, 229, 238, 0.95);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .section-label {
+      display: block;
+      font-weight: 750;
+      margin-bottom: 10px;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: -2px 0 12px;
+      line-height: 1.5;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(36, 87, 214, 0.1);
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      padding: 16px;
+      line-height: 1.6;
+    }
+
+    input,
+    select {
+      height: 48px;
+      padding: 0 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      min-height: 48px;
+      padding: 0 18px;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform .15s ease, background .2s ease, opacity .2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary {
+      background: #eef2f7;
+      color: var(--text);
+    }
+
+    .output-wrap {
+      display: none;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .output-wrap.show {
+      display: block;
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .output-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .email-box {
+      white-space: pre-wrap;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      line-height: 1.7;
+      min-height: 180px;
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 10px;
+      color: var(--success);
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .example {
+      margin-top: 18px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 16px;
+      background: rgba(248, 250, 252, 0.7);
+    }
+
+    .example strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .example p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.93rem;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 22px;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 20px, 980px);
+        padding-top: 24px;
+      }
+
+      .app-card {
+        padding: 18px;
+        border-radius: 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .output-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .output-header button {
+        width: 100%;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <span>Agent Web Flow AI</span>
+    </div>
+
+    <section class="hero">
+      <h1>Turn quick client notes into a polished follow-up email.</h1>
+      <p>
+        Built for real estate agents who want to follow up faster. Add a few rough notes,
+        choose a tone, and generate a professional email in seconds.
+      </p>
+    </section>
+
+    <section class="app-card">
+      <label class="section-label" for="notes">Quick client notes</label>
+      <p class="helper">Write naturally. Short notes, fragments, and abbreviations are fine.</p>
+
+      <textarea id="notes" placeholder="Example: Met Sarah today. Looking for 3 bed in Bowie under 500k. First-time buyer. Needs lender. Wants to move by October. Send listings tomorrow."></textarea>
+
+      <div class="grid">
+        <div>
+          <label class="section-label" for="clientName">Client name</label>
+          <input id="clientName" type="text" placeholder="Sarah" />
+        </div>
+
+        <div>
+          <label class="section-label" for="tone">Email tone</label>
+          <select id="tone">
+            <option value="friendly">Friendly & professional</option>
+            <option value="warm">Warm & personal</option>
+            <option value="concise">Short & concise</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="generateBtn">Generate Email</button>
+        <button class="secondary" id="clearBtn">Clear</button>
+      </div>
+
+      <div class="example">
+        <strong>Tip</strong>
+        <p>
+          This first version works entirely in the browser and does not send your notes anywhere.
+          It creates a useful email draft from the notes you enter.
+        </p>
+      </div>
+
+      <section id="outputWrap" class="output-wrap">
+        <div class="output-header">
+          <h2>Follow-up email</h2>
+          <button class="secondary" id="copyBtn">Copy Email</button>
+        </div>
+        <div id="emailOutput" class="email-box"></div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <div class="footer">Agent Web Flow AI • Real estate follow-up made faster</div>
+  </main>
+
+  <script>
+    const notesEl = document.getElementById("notes");
+    const clientNameEl = document.getElementById("clientName");
+    const toneEl = document.getElementById("tone");
+    const generateBtn = document.getElementById("generateBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const outputWrap = document.getElementById("outputWrap");
+    const emailOutput = document.getElementById("emailOutput");
+    const statusEl = document.getElementById("status");
+
+    function cleanNotes(text) {
+      return text
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/\bi\b/g, "I");
+    }
+
+    function extractSentences(notes) {
+      return notes
+        .split(/[.!?]+/)
+        .map(part => part.trim())
+        .filter(Boolean);
+    }
+
+    function sentenceCase(text) {
+      if (!text) return "";
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function buildEmail() {
+      const rawNotes = cleanNotes(notesEl.value);
+      const clientName = clientNameEl.value.trim() || "there";
+      const tone = toneEl.value;
+
+      if (!rawNotes) {
+        statusEl.textContent = "Add a few client notes first.";
+        outputWrap.classList.add("show");
+        emailOutput.textContent = "";
+        return;
+      }
+
+      const pieces = extractSentences(rawNotes);
+      const noteSummary = pieces.length
+        ? pieces.map(sentenceCase).join(". ") + "."
+        : sentenceCase(rawNotes) + ".";
+
+      let opening = `Hi ${clientName},\n\nIt was great connecting with you.`;
+      let bridge = "I wanted to follow up with a quick recap from our conversation.";
+      let closing = "I’m looking forward to helping you with the next steps. Please feel free to reach out if anything changes or if you have any questions.";
+
+      if (tone === "warm") {
+        opening = `Hi ${clientName},\n\nIt was really nice connecting with you!`;
+        bridge = "I wanted to send over a quick recap so we’re on the same page moving forward.";
+        closing = "I’m excited to help you through the process and make things as easy as possible. Reach out anytime if a question comes up.";
+      }
+
+      if (tone === "concise") {
+        opening = `Hi ${clientName},`;
+        bridge = "Thanks again for your time. Here’s a quick recap from our conversation:";
+        closing = "I’ll keep things moving and follow up with the next steps. Let me know if you have any questions.";
+      }
+
+      const email = `${opening}\n\n${bridge}\n\n${noteSummary}\n\n${closing}\n\nBest,\n[Your Name]`;
+
+      emailOutput.textContent = email;
+      outputWrap.classList.add("show");
+      statusEl.textContent = "";
+      outputWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    async function copyEmail() {
+      const text = emailOutput.textContent.trim();
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        statusEl.textContent = "Email copied to clipboard.";
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = "Copy Email";
+        }, 1600);
+      } catch (error) {
+        statusEl.textContent = "Copy failed. Select the email text and copy it manually.";
+      }
+    }
+
+    function clearForm() {
+      notesEl.value = "";
+      clientNameEl.value = "";
+      toneEl.value = "friendly";
+      emailOutput.textContent = "";
+      statusEl.textContent = "";
+      outputWrap.classList.remove("show");
+      notesEl.focus();
+    }
+
+    generateBtn.addEventListener("click", buildEmail);
+    copyBtn.addEventListener("click", copyEmail);
+    clearBtn.addEventListener("click", clearForm);
+
+    notesEl.addEventListener("keydown", event => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+        buildEmail();
+      }
+    });
+  </script>
+</body>
+</html>
